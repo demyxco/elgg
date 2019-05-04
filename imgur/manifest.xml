@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin_manifest xmlns="http://www.elgg.org/plugin_manifest/1.8">
+	<name>Imgur</name>
+	<id>imgur</id>
+	<author>Cim</author>
+	<version>3.0</version>
+	<category>Demyx</category>
+	<category>Media</category>
+	<category>Third Party Integrations</category>
+	<description>Allows users to anonymously upload images to Imgur's servers.</description>
+	<website>https://github.com/demyxco/elgg</website>
+	<copyright>© Demyx</copyright>
+	<license>MIT License</license>
+	<requires>
+		<type>elgg_release</type>
+		<version>3.0</version>
+	</requires>
+</plugin_manifest>
