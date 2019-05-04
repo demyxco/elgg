@@ -25,6 +25,6 @@ function imgur_init() {
 
 function imgur_client_id($hook, $type, $value, $params) {
 	// Store Client ID so we can get it via JS
-    $value['imgur']['client_id'] = elgg_get_plugin_setting('client_id', 'imgur');
-    return $value;
+	$value['imgur']['client_id'] = elgg_get_plugin_setting('client_id', 'imgur');
+	return $value;
 }
