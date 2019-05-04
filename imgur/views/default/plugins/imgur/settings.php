@@ -1,9 +1,9 @@
 <?php
 /**
- * 	@package 	Imgur
+ *	@package	Imgur
  *	@version 	3.0
- * 	@author 	Cim 
- *  @link 		https://github.com/demyxco/elgg
+ *	@author 	Cim 
+ *	@link 		https://github.com/demyxco/elgg
  */
 
 $client_id = elgg_get_plugin_setting('client_id', 'imgur');

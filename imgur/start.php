@@ -1,9 +1,9 @@
 <?php
 /**
- * 	@package 	Imgur
+ *	@package	Imgur
  *	@version 	3.0
- * 	@author 	Cim 
- *  @link 		https://github.com/demyxco/elgg
+ *	@author 	Cim 
+ *	@link 		https://github.com/demyxco/elgg
  */
 
 elgg_register_event_handler('init','system','imgur_init');
