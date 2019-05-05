@@ -1,6 +1,6 @@
 /**
  *  @package    Blog Cover Photo
- *  @version    3.0
+ *  @version    3.1
  *  @author     Cim 
  *  @link       https://github.com/demyxco/elgg
  */
@@ -51,7 +51,8 @@
 	background-position: center center;
 }
 .elgg-item-river-object-blog-create .blogcoverphoto-river {
-	height: 85px;
+	width: 150px;
+	height: 65px;
 }
 .elgg-widget-content .blogcoverphoto-river {
 	float: none;
