@@ -18,7 +18,7 @@ define(['require', 'jquery', 'elgg'], function(require, $, elgg) {
 	};
 	// Initiate Imgur asset with Client ID
 	new Imgur({
-		clientid: elgg.data.imgur.client_id,
+		clientid: elgg.data.imgur.imgur_client_id,
 		callback: blogcoverphoto_feedback,
 		dropzone: '.blogcoverphoto-dropzone',
 		info: '.blogcoverphoto-info',

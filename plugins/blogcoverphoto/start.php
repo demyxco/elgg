@@ -11,6 +11,9 @@ elgg_register_event_handler('publish', 'object', 'blogcoverphoto_url');
 elgg_register_event_handler('update', 'object', 'blogcoverphoto_url');
 
 function blogcoverphoto_init() {
+	// Updater for plugin setting
+	elgg_register_ajax_view('blogcoverphoto/update');
+
 	// CSS
 	elgg_extend_view('elgg.css', 'blogcoverphoto.css');
 
