@@ -7,6 +7,7 @@ Allows users to anonymously upload images to Imgur's servers. This plugin allows
 * Getting errors? Visit the original link below in credits
 
 ### FEATURES
+* Drag and drop
 * Ajax upload
 * Works on all forms with long text
 

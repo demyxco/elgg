@@ -12,6 +12,6 @@ if (elgg_is_active_plugin('extended_tinymce')) elgg_require_js('imgur/imgur-tiny
 
 ?>
 
-<div class="imgur-dropzone">
-    <div class="imgur-info"></div>
+<div class="imgur-dropzone imgur-main-dropzone">
+	<div class="imgur-info imgur-main-info"></div>
 </div>
