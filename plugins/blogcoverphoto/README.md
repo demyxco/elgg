@@ -1,7 +1,7 @@
 # Blog Cover Photo
 Simple blog cover photo plugin
 
-### FEATURES
+### Features
 * Drag and drop
 * Ajax upload
 * Responsive
@@ -11,5 +11,5 @@ KEY | VALUE
 ------------- | -------------
 blogcoverphoto_url | NULL
 
-### LINKS
+### Links
 * Elgg Repository: https://elgg.org/plugins/1552344
