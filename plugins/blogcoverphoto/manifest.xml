@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin_manifest xmlns="http://www.elgg.org/plugin_manifest/1.8">
+	<name>Blog Cover Photo</name>
+	<id>blogcoverphoto</id>
+	<author>Cim</author>
+	<version>3.0</version>
+	<category>Misc</category>
+	<category>Media</category>
+	<category>Photos and images</category>
+	<description>Allows the blog plugin to have a cover photo.</description>
+	<website>https://github.com/demyxco/elgg</website>
+	<copyright>© Demyx</copyright>
+	<license>MIT</license>
+	<requires>
+		<type>elgg_release</type>
+		<version>3.0</version>
+		<type>plugin</type>
+		<name>imgur</name>
+	</requires>
+</plugin_manifest>
+
+

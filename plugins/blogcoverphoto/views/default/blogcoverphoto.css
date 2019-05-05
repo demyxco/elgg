@@ -1,0 +1,77 @@
+/**
+ *  @package    Blog Cover Photo
+ *  @version    3.0
+ *  @author     Cim 
+ *  @link       https://github.com/demyxco/elgg
+ */
+
+.blogcoverphoto-dropzone-container {
+	width: 100%;
+	display: inline-block;
+}
+.blogcoverphoto-dropzone {
+	width: 100%;
+	height: 400px;
+	margin: 0;
+	max-width: none;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.blogcoverphoto-delete {
+	margin-top: 20px;
+}
+.blogcoverphoto-info {
+	padding: 0;
+	height: 400px;
+	line-height: 400px;
+	background: (255,255,255,.5);
+}
+.imgur-dropzone.imgur-dropzone-dragging.blogcoverphoto-dropzone {
+	background-image: none !important;
+}
+.imgur-dropzone.imgur-dropzone-dragging.blogcoverphoto-dropzone .blogcoverphoto-info {
+	display: block !important;
+}
+.blogcoverphoto-cover {
+	width: 100%;
+	height: 400px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	margin-bottom: 20px;
+}
+.blogcoverphoto-river {
+	margin-left: 20px;
+	float: right;
+	width: 200px;
+	height: 125px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.elgg-item-river-object-blog-create .blogcoverphoto-river {
+	height: 85px;
+}
+.elgg-widget-content .blogcoverphoto-river {
+	float: none;
+	margin-left: 0;
+	width: 100%;
+	height: 200px;
+	margin-bottom: 20px;
+}
+@media screen and (max-width: 576px) {
+	.blogcoverphoto-cover {
+		height: 200px;
+	}
+	.blogcoverphoto-river {
+		width: 100%;
+		height: 200px;
+		float: none;
+		margin-left: 0;
+		margin-bottom: 20px;
+	}
+	.elgg-item-river-object-blog-create .blogcoverphoto-river {
+		height: 200px;
+	}
+}
