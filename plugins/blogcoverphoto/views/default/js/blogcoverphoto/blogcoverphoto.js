@@ -1,8 +1,5 @@
 /**
  *	@package	Blog Cover Photo
- *	@version 	3.1
- *	@author 	Cim 
- *	@link 		https://github.com/demyxco/elgg
  */
 
 define(['require', 'jquery', 'elgg'], function(require, $, elgg) {

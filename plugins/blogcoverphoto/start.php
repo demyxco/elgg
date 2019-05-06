@@ -1,7 +1,7 @@
 <?php
 /**
  *	@package	Blog Cover Photo
- *	@version 	3.1
+ *	@version 	3.2
  *	@author 	Cim 
  *	@link 		https://github.com/demyxco/elgg
  */

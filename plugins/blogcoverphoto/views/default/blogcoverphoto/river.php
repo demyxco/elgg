@@ -1,9 +1,6 @@
 <?php
 /**
  *	@package	Blog Cover Photo
- *	@version 	3.1
- *	@author 	Cim 
- *	@link 		https://github.com/demyxco/elgg
  */
 
 // Get blog river items

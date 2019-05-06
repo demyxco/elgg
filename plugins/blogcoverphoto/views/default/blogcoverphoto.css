@@ -1,8 +1,5 @@
 /**
- *  @package    Blog Cover Photo
- *  @version    3.1
- *  @author     Cim 
- *  @link       https://github.com/demyxco/elgg
+ *	@package	Blog Cover Photo
  */
 
 .blogcoverphoto-dropzone-container {
@@ -73,6 +70,7 @@
 		margin-bottom: 20px;
 	}
 	.elgg-item-river-object-blog-create .blogcoverphoto-river {
+		width: 100%;
 		height: 200px;
 	}
 }

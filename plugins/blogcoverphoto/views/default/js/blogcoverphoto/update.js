@@ -1,8 +1,5 @@
 /**
  *	@package	Blog Cover Photo
- *	@version 	3.1
- *	@author 	Cim 
- *	@link 		https://github.com/demyxco/elgg
  */
 
 define(['require', 'jquery', 'elgg', 'elgg/spinner', 'elgg/Ajax'], function(require, $, elgg, spinner, Ajax) {
