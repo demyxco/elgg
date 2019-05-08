@@ -1,5 +1,5 @@
 # Imgur
-Allows users to anonymously upload images to Imgur's servers. This plugin allows your users to anonymously upload images to the Imgur's servers. Saving you precious bandwidth and disk space. Simple one click to upload.
+Allows users to anonymously upload images to Imgur's servers. Saving you precious bandwidth and disk space.
 
 ### Features
 * Works with CKEditor and iionly's extended_tinymce plugin
