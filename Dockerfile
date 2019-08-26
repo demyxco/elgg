@@ -203,7 +203,7 @@ RUN set -ex; \
 
 RUN set -ex; \
 	apk add --no-cache --virtual .elgg-deps curl zip unzip jq; \
-    export ELGG_VERSION=$(curl -sL https://api.github.com/repos/Elgg/Elgg/releases/latest | jq -r '.assets[].browser_download_url'); \
+    export ELGG_VERSION=$(curl -sL https://api.github.com/repos/Elgg/Elgg/releases/latest | jq -r '.assets[].browser_download_url' | sed -e 's/\r//g'); \
 	mkdir -p /var/www/html; \
     mkdir -p /var/www/data; \
 	curl -o elgg.zip -fSL "$ELGG_VERSION"; \
