@@ -22,10 +22,7 @@ before_install:
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" .
   - docker-compose up -d
-  - sleep 10
-  - docker exec -t elgg sh -c "apk add git composer; cd /var/www && git clone https://github.com/Elgg/Elgg.git"
-  - docker cp elgg-installer.php elgg:/var/www/Elgg
-  - docker exec -t elgg sh -c "cd /var/www/Elgg; composer install; php elgg-installer.php; mv /var/www/Elgg/elgg-config/settings.php /var/www/html/elgg-config; chown -R www-data:www-data /var/www/html"
+  - sleep 5
   - docker exec -t elgg sh -c "php vendor/bin/elgg-cli plugins:list --status all"
 
 after_success:

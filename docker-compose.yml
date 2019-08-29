@@ -1,47 +1,6 @@
 version: "3.7"
 
 services:
-  traefik:
-    image: traefik
-    container_name: demyx_traefik
-    restart: unless-stopped
-    command: 
-      - --api
-      - --api.statistics.recenterrors=100
-      - --docker
-      - --docker.watch=true
-      - --docker.exposedbydefault=false
-      - "--entrypoints=Name:http Address::80"
-      #- "--entrypoints=Name:https Address::443 TLS"
-      - --defaultentrypoints=http
-      #- --defaultentrypoints=http,https
-      #- --acme
-      #- --acme.email=info@domain.tld
-      #- --acme.storage=/etc/traefik/acme.json
-      #- --acme.entrypoint=https
-      #- --acme.onhostrule=true
-      #- --acme.httpchallenge.entrypoint=http
-      - --logLevel=INFO
-      - --accessLog.filePath=/etc/traefik/access.log
-      - --traefikLog.filePath=/etc/traefik/traefik.log
-    networks:
-      - demyx
-    ports:
-      - 80:80
-      #- 443:443
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      #- ./acme.json:/etc/traefik/acme.json # chmod 600
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=8080"
-      - "traefik.frontend.rule=Host:traefik.domain.tld"
-      #- "traefik.frontend.redirect.entryPoint=https"
-      #- "traefik.frontend.auth.basic.users=${DEMYX_STACK_AUTH}"
-      #- "traefik.frontend.headers.forceSTSHeader=true"
-      #- "traefik.frontend.headers.STSSeconds=315360000"
-      #- "traefik.frontend.headers.STSIncludeSubdomains=true"
-      #- "traefik.frontend.headers.STSPreload=true"
   elgg_db:
     container_name: elgg_db
     image: demyx/mariadb
@@ -63,13 +22,26 @@ services:
       - demyx
     volumes:
       - elgg:/var/www/html
+    depends_on:
+      - elgg_db
     environment:
-      ELGG_DOMAIN: domain.tld
+      ELGG_DOMAIN: semver.tk
+      ELGG_DBUSER: demyx_user
+      ELGG_DBPASSWORD: demyx_password
+      ELGG_DBNAME: demyx_db
+      ELGG_DBHOST: elgg_db
+      ELGG_SITENAME: demyx
+      ELGG_SITEEMAIL: info@domain.tld
+      ELGG_WWWROOT: https://semver.tk/
+      ELGG_DISPLAYNAME: demyx
+      ELGG_EMAIL: info@domain.tld
+      ELGG_USERNAME: demyx
+      ELGG_PASSWORD: demyx_password
       TZ: America/Los_Angeles
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"
-      - "traefik.frontend.rule=Host:domain.tld,www.domain.tld"
+      - "traefik.frontend.rule=Host:semver.tk,www.semver.tk"
       #- "traefik.frontend.redirect.entryPoint=https"
       #- "traefik.frontend.auth.basic.users=${DEMYX_STACK_AUTH}"
       #- "traefik.frontend.headers.forceSTSHeader=true"

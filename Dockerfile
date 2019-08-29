@@ -8,7 +8,7 @@ LABEL sh.demyx.registry https://hub.docker.com/u/demyx
 
 ENV TZ America/Los_Angeles
 
-RUN set -x \
+RUN set -ex \
 # create nginx user/group first, to be consistent throughout docker variants
     && export NGINX_MAINLINE_DOCKERFILE="$(wget -qO- https://raw.githubusercontent.com/nginxinc/docker-nginx/master/mainline/alpine/Dockerfile)" \
     && export NGINX_VERSION="$(echo "$NGINX_MAINLINE_DOCKERFILE" | grep 'ENV NGINX_VERSION' | cut -c 19-)" \
@@ -119,7 +119,7 @@ RUN set -x \
 #    
 # BUILD CUSTOM MODULES
 #
-RUN set -x; \
+RUN set -ex; \
     apk add --no-cache --virtual .build-deps \
 	gcc \
 	libc-dev \
@@ -199,17 +199,20 @@ RUN set -ex; \
 RUN set -ex; \
 	apk add --no-cache ed dumb-init bash libsodium; \
     ln -s /usr/sbin/php-fpm7 /usr/local/bin/php-fpm; \
-    mkdir -p /var/log/demyx
+    mkdir -p /var/log/demyx; \
+    mkdir -p /var/www/html; \
+    mkdir -p /var/www/data
 
 RUN set -ex; \
-	apk add --no-cache --virtual .elgg-deps curl zip unzip jq; \
-    export ELGG_VERSION=$(curl -sL https://api.github.com/repos/Elgg/Elgg/releases/latest | jq -r '.assets[].browser_download_url' | sed -e 's/\r//g'); \
-	mkdir -p /var/www/html; \
-    mkdir -p /var/www/data; \
-	curl -o elgg.zip -fSL "$ELGG_VERSION"; \
-	unzip elgg.zip -d /usr/src/; \
-	rm elgg.zip; \
-	mv /usr/src/elgg-* /usr/src/elgg; \
+	apk add --no-cache --virtual .elgg-deps composer git; \
+    chown -R www-data:www-data /usr/src; \
+    su -c 'composer create-project elgg/starter-project:dev-master ./usr/src/elgg; \
+        cd /usr/src/elgg; \
+        composer install; \
+        composer install' -s /bin/sh www-data; \
+    chown -R root:root /usr/src; \
+    git clone https://github.com/Elgg/Elgg.git /usr/src/git; \
+    cd /usr/src/git && composer install; \
 	apk del .elgg-deps && rm -rf /var/cache/apk/*
 
 COPY nginx.conf /etc/nginx/nginx.conf
@@ -218,8 +221,8 @@ COPY www.conf /etc/php7/php-fpm.d/www.conf
 COPY docker.conf /etc/php7/php-fpm.d/docker.conf
 COPY demyx-entrypoint.sh /usr/local/bin/demyx-entrypoint
 
-RUN chown -R www-data:www-data /usr/src/elgg; \
-    chown -R www-data:www-data /var/www/data; \
+RUN set -ex; \
+    chown -R www-data:www-data /var/www; \ 
     chmod +x /usr/local/bin/demyx-entrypoint
 
 EXPOSE 80
