@@ -66,14 +66,14 @@ services:
     depends_on:
       - elgg_db
     environment:
-      ELGG_DOMAIN: semver.tk
+      ELGG_DOMAIN: domain.tld
       ELGG_DBUSER: demyx_user
       ELGG_DBPASSWORD: demyx_password
       ELGG_DBNAME: demyx_db
       ELGG_DBHOST: elgg_db
       ELGG_SITENAME: demyx
       ELGG_SITEEMAIL: info@domain.tld
-      ELGG_WWWROOT: https://semver.tk/
+      ELGG_WWWROOT: http://domain.tld/
       ELGG_DISPLAYNAME: demyx
       ELGG_EMAIL: info@domain.tld
       ELGG_USERNAME: demyx
@@ -82,7 +82,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"
-      - "traefik.frontend.rule=Host:semver.tk,www.semver.tk"
+      - "traefik.frontend.rule=Host:domain.tld,www.domain.tld"
       #- "traefik.frontend.redirect.entryPoint=https"
       #- "traefik.frontend.auth.basic.users=${DEMYX_STACK_AUTH}"
       #- "traefik.frontend.headers.forceSTSHeader=true"
