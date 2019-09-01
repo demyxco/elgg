@@ -206,7 +206,9 @@ RUN set -ex; \
 RUN set -ex; \
 	apk add --no-cache --virtual .elgg-deps composer git; \
     chown -R www-data:www-data /usr/src; \
-    su -c 'composer create-project elgg/starter-project:dev-master ./usr/src/elgg; \
+    su -c 'composer config -g repo.packagist composer https://packagist.org; \
+        composer config -g github-protocols https ssh; \
+        composer create-project elgg/starter-project:dev-master ./usr/src/elgg; \
         cd /usr/src/elgg; \
         composer install; \
         composer install' -s /bin/sh www-data; \
