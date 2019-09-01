@@ -21,8 +21,10 @@ before_install:
 
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" .
-  - docker-compose up -d
+  - docker-compose up -d elgg_db
   - sleep 5
+  - docker-compose up -d
+  - sleep 20
   - docker exec -t elgg sh -c "php vendor/bin/elgg-cli plugins:list --status all"
 
 after_success:
