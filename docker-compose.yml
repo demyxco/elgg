@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   traefik:
-    image: traefik
+    image: traefik:v1.7.16
     container_name: demyx_traefik
     restart: unless-stopped
     command: 
