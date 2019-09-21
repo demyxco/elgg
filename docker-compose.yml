@@ -66,19 +66,19 @@ services:
     depends_on:
       - elgg_db
     environment:
-      ELGG_DOMAIN: domain.tld
-      ELGG_DBUSER: demyx_user
-      ELGG_DBPASSWORD: demyx_password
-      ELGG_DBNAME: demyx_db
-      ELGG_DBHOST: elgg_db
-      ELGG_SITENAME: demyx
-      ELGG_SITEEMAIL: info@domain.tld
-      ELGG_WWWROOT: http://domain.tld/
-      ELGG_DISPLAYNAME: demyx
-      ELGG_EMAIL: info@domain.tld
-      ELGG_USERNAME: demyx
-      ELGG_PASSWORD: demyx_password
-      TZ: America/Los_Angeles
+      - ELGG_DOMAIN=domain.tld
+      - ELGG_DBUSER=demyx_user
+      - ELGG_DBPASSWORD=demyx_password
+      - ELGG_DBNAME=demyx_db
+      - ELGG_DBHOST=elgg_db
+      - ELGG_SITENAME=demyx
+      - ELGG_SITEEMAIL=info@domain.tld
+      - ELGG_WWWROOT=http://domain.tld/
+      - ELGG_DISPLAYNAME=demyx
+      - ELGG_EMAIL=info@domain.tld
+      - ELGG_USERNAME=demyx
+      - ELGG_PASSWORD=demyx_password
+      - TZ=America/Los_Angeles
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"

@@ -19,7 +19,7 @@ TIMEZONE | America/Los_Angeles
 PHP | /etc/php7/php.ini<br />/etc/php7/php-fpm.d/php-fpm.conf
 NGINX | /etc/nginx/nginx.conf<br />/etc/nginx/cache<br />/etc/nginx/common<br />/etc/nginx/modules<br />
 
-## Updates
+## Updates & Support
 [![Code Size](https://img.shields.io/github/languages/code-size/demyxco/elgg?style=flat&color=blue)](https://github.com/demyxco/elgg)
 [![Repository Size](https://img.shields.io/github/repo-size/demyxco/elgg?style=flat&color=blue)](https://github.com/demyxco/elgg)
 [![Watches](https://img.shields.io/github/watchers/demyxco/elgg?style=flat&color=blue)](https://github.com/demyxco/elgg)
@@ -28,6 +28,7 @@ NGINX | /etc/nginx/nginx.conf<br />/etc/nginx/cache<br />/etc/nginx/common<br />
 
 * Auto built weekly on Sundays (America/Los_Angeles)
 * Rolling release updates
+* For support: [#demyx](https://webchat.freenode.net/?channel=#demyx)
 
 ## Elgg Container
 ENVIRONMENT | VARIABLE
@@ -61,11 +62,9 @@ MARIADB_INNODB_LOCK_WAIT_TIMEOUT | 50
 MARIADB_INNODB_LOG_BUFFER_SIZE | 8M
 MARIADB_INNODB_LOG_FILE_SIZE | 5M
 MARIADB_INNODB_USE_NATIVE_AIO | 1
-MARIADB_KEY_BUFFER_SIZE | 16M
 MARIADB_KEY_BUFFER_SIZE | 20M
 MARIADB_LOG_BIN | mysql-bin
 MARIADB_MAX_ALLOWED_PACKET | 16M
-MARIADB_MAX_ALLOWED_PACKET | 1M
 MARIADB_MAX_CONNECTIONS | 151
 MARIADB_MYISAM_SORT_BUFFER_SIZE | 8M
 MARIADB_NET_BUFFER_SIZE | 8K
@@ -76,14 +75,16 @@ MARIADB_READ_RND_BUFFER_SIZE | 512K
 MARIADB_ROOT_PASSWORD | # Required
 MARIADB_SERVER_ID | 1
 MARIADB_SORT_BUFFER_SIZE | 20M
-MARIADB_SORT_BUFFER_SIZE | 512K
 MARIADB_TABLE_OPEN_CACHE | 64
 MARIADB_USERNAME | # Optional
 MARIADB_WRITE_BUFFER | 2M
 
 ## Usage
-This config requires no .toml for Traefik and is ready to go when running: 
-`docker-compose up -d`. If you want SSL, just remove the comments and make sure you have acme.json chmod to 600 (`touch acme.json; chmod 600 acme.json`) before mounting.
+This config requires no .toml for Traefik and is ready to go when running: `docker-compose up -d`. 
+
+SSL/TLS
+* Remove the comments (#)
+* `docker run -t --rm -v demyx_traefik:/demyx demyx/utilities "touch /demyx/acme.json; chmod 600 /demyx/acme.json"`
 
 ```
 version: "3.7"
@@ -105,13 +106,13 @@ services:
       #- --defaultentrypoints=http,https
       #- --acme
       #- --acme.email=info@domain.tld
-      #- --acme.storage=/etc/traefik/acme.json
+      #- --acme.storage=/demyx/acme.json
       #- --acme.entrypoint=https
       #- --acme.onhostrule=true
       #- --acme.httpchallenge.entrypoint=http
       - --logLevel=INFO
-      - --accessLog.filePath=/etc/traefik/access.log
-      - --traefikLog.filePath=/etc/traefik/traefik.log
+      - --accessLog.filePath=/demyx/access.log
+      - --traefikLog.filePath=/demyx/traefik.log
     networks:
       - demyx
     ports:
@@ -119,7 +120,7 @@ services:
       #- 443:443
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      #- ./acme.json:/etc/traefik/acme.json # chmod 600
+      #- demyx_traefik:/demyx/acme.json
     labels:
       - "traefik.enable=true"
       - "traefik.port=8080"
@@ -139,10 +140,35 @@ services:
     volumes:
       - elgg_db:/var/lib/mysql
     environment:
-      MARIADB_DATABASE: demyx_db
-      MARIADB_USERNAME: demyx_user
-      MARIADB_PASSWORD: demyx_password
-      MARIADB_ROOT_PASSWORD: demyx_root_password
+      - MARIADB_DATABASE=demyx_db
+      - MARIADB_USERNAME=demyx_user
+      - MARIADB_PASSWORD=demyx_password
+      - MARIADB_ROOT_PASSWORD=demyx_root_password # mandatory
+      - MARIADB_BINLOG_FORMAT=mixed
+      - MARIADB_CHARACTER_SET_SERVER=utf8
+      - MARIADB_COLLATION_SERVER=utf8_general_ci
+      - MARIADB_DEFAULT_CHARACTER_SET=utf8
+      - MARIADB_INNODB_BUFFER_POOL_SIZE=16M
+      - MARIADB_INNODB_DATA_FILE_PATH=ibdata1:10M:autoextend
+      - MARIADB_INNODB_FLUSH_LOG_AT_TRX_COMMIT=1
+      - MARIADB_INNODB_LOCK_WAIT_TIMEOUT=50
+      - MARIADB_INNODB_LOG_BUFFER_SIZE=8M
+      - MARIADB_INNODB_LOG_FILE_SIZE=5M
+      - MARIADB_INNODB_USE_NATIVE_AIO=1
+      - MARIADB_KEY_BUFFER_SIZE=20M
+      - MARIADB_LOG_BIN=mysql-bin
+      - MARIADB_MAX_ALLOWED_PACKET=16M
+      - MARIADB_MAX_CONNECTIONS=151
+      - MARIADB_MYISAM_SORT_BUFFER_SIZE=8M
+      - MARIADB_NET_BUFFER_SIZE=8K
+      - MARIADB_READ_BUFFER=2M
+      - MARIADB_READ_BUFFER_SIZE=256K
+      - MARIADB_READ_RND_BUFFER_SIZE=512K
+      - MARIADB_SERVER_ID=1
+      - MARIADB_SORT_BUFFER_SIZE=20M
+      - MARIADB_TABLE_OPEN_CACHE=64
+      - MARIADB_WRITE_BUFFER=2M
+      - TZ=America/Los_Angeles
   elgg:
     container_name: elgg
     image: demyx/elgg
@@ -154,19 +180,19 @@ services:
     depends_on:
       - elgg_db
     environment:
-      ELGG_DOMAIN: domain.tld
-      ELGG_DBUSER: demyx_user
-      ELGG_DBPASSWORD: demyx_password
-      ELGG_DBNAME: demyx_db
-      ELGG_DBHOST: elgg_db
-      ELGG_SITENAME: demyx
-      ELGG_SITEEMAIL: info@domain.tld
-      ELGG_WWWROOT: http://domain.tld/
-      ELGG_DISPLAYNAME: demyx
-      ELGG_EMAIL: info@domain.tld
-      ELGG_USERNAME: demyx
-      ELGG_PASSWORD: demyx_password
-      TZ: America/Los_Angeles
+      - ELGG_DOMAIN=domain.tld
+      - ELGG_DBUSER=demyx_user
+      - ELGG_DBPASSWORD=demyx_password
+      - ELGG_DBNAME=demyx_db
+      - ELGG_DBHOST=elgg_db
+      - ELGG_SITENAME=demyx
+      - ELGG_SITEEMAIL=info@domain.tld
+      - ELGG_WWWROOT=http://domain.tld/
+      - ELGG_DISPLAYNAME=demyx
+      - ELGG_EMAIL=info@domain.tld
+      - ELGG_USERNAME=demyx
+      - ELGG_PASSWORD=demyx_password
+      - TZ=America/Los_Angeles
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"
@@ -182,6 +208,8 @@ volumes:
     name: elgg
   elgg_db:
     name: elgg_db
+  demyx_traefik:
+    name: demyx_traefik
 networks:
   demyx:
     name: demyx
