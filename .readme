@@ -14,7 +14,7 @@ TITLE | DESCRIPTION
 --- | ---
 USER<br />GROUP | www-data (82)<br />www-data (82)
 WORKDIR | /var/www/html
-PORT | 80
+PORT | 80 9000
 TIMEZONE | America/Los_Angeles
 PHP | /etc/php7/php.ini<br />/etc/php7/php-fpm.d/php-fpm.conf
 NGINX | /etc/nginx/nginx.conf<br />/etc/nginx/cache<br />/etc/nginx/common<br />/etc/nginx/modules<br />
@@ -88,7 +88,6 @@ SSL/TLS
 
 ```
 version: "3.7"
-
 services:
   traefik:
     image: traefik:v1.7.16

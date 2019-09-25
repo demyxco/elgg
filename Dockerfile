@@ -162,7 +162,7 @@ RUN set -ex; \
 
 RUN set -ex; \
     adduser -u 82 -D -S -G  www-data www-data; \
-    apk add --no-cache php7 \
+    apk add --no-cache php7 libsodium \
     php7-bcmath \
     php7-ctype \
 	php7-curl \
@@ -197,7 +197,7 @@ RUN set -ex; \
 	php7-zlib
 
 RUN set -ex; \
-	apk add --no-cache ed dumb-init bash libsodium; \
+	apk add --no-cache ed bash ; \
     ln -s /usr/sbin/php-fpm7 /usr/local/bin/php-fpm; \
     mkdir -p /var/log/demyx; \
     mkdir -p /var/www/html; \
@@ -217,18 +217,28 @@ RUN set -ex; \
     cd /usr/src/git && composer install; \
 	apk del .elgg-deps && rm -rf /var/cache/apk/*
 
+# s6 overlay
+RUN set -ex; \
+    apk add --no-cache --virtual .elgg-deps curl; \
+    export DEMYX_S6_VERSION=$(curl -sL https://api.github.com/repos/just-containers/s6-overlay/releases/latest | grep '"name"' | head -n1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
+    wget https://github.com/just-containers/s6-overlay/releases/download/${DEMYX_S6_VERSION}/s6-overlay-amd64.tar.gz -qO /tmp/s6-overlay-amd64.tar.gz; \
+    tar xzf /tmp/s6-overlay-amd64.tar.gz -C /; \
+    rm -rf /tmp/*; \
+    apk del .elgg-deps && rm -rf /var/cache/apk/*; \
+    chown -R www-data:www-data /var/www
+
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY php.ini /etc/php7/php.ini
 COPY www.conf /etc/php7/php-fpm.d/www.conf
 COPY docker.conf /etc/php7/php-fpm.d/docker.conf
-COPY demyx-entrypoint.sh /usr/local/bin/demyx-entrypoint
-
-RUN set -ex; \
-    chown -R www-data:www-data /var/www; \ 
-    chmod +x /usr/local/bin/demyx-entrypoint
+COPY s6-overlay/00-init /etc/cont-init.d/00-init
+COPY s6-overlay/00-www-data /etc/fix-attrs.d/00-www-data
+COPY s6-overlay/run-php-fpm /etc/services.d/php-fpm/run
+COPY s6-overlay/run-nginx /etc/services.d/nginx/run
 
 EXPOSE 80
+EXPOSE 9000
 
 WORKDIR /var/www/html
 
-ENTRYPOINT ["dumb-init", "demyx-entrypoint"]
+ENTRYPOINT ["/init"]
