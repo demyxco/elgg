@@ -236,8 +236,7 @@ COPY s6-overlay/00-www-data /etc/fix-attrs.d/00-www-data
 COPY s6-overlay/run-php-fpm /etc/services.d/php-fpm/run
 COPY s6-overlay/run-nginx /etc/services.d/nginx/run
 
-EXPOSE 80
-EXPOSE 9000
+EXPOSE 80 9000
 
 WORKDIR /var/www/html
 
