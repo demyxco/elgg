@@ -3,9 +3,9 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/demyx/elgg?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
 [![Architecture](https://img.shields.io/badge/linux-amd64-important?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
 [![Alpine](https://img.shields.io/badge/alpine-3.10.2-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
-[![NGINX](https://img.shields.io/badge/nginx-1.17.3-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
+[![NGINX](https://img.shields.io/badge/nginx-1.17.4-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
 [![PHP](https://img.shields.io/badge/php-7.3.9-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
-[![Elgg](https://img.shields.io/badge/elgg-3.1.3-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
+[![Elgg](https://img.shields.io/badge/elgg-3.1.4-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
 
 Elgg is an award-winning open source social networking engine that provides a robust framework on which to build all kinds of social environments, from a campus wide social network for your university, school or college or an internal collaborative platform for your organization through to a brand-building communications tool for your company and its clients. 
