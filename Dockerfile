@@ -217,7 +217,7 @@ RUN set -ex; \
     cd /usr/src/git && composer install; \
 	apk del .elgg-deps && rm -rf /var/cache/apk/*
 
-# s6 overlay
+# s6-overlay
 RUN set -ex; \
     apk add --no-cache --virtual .elgg-deps curl; \
     export DEMYX_S6_VERSION=$(curl -sL https://api.github.com/repos/just-containers/s6-overlay/releases/latest | grep '"name"' | head -n1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
