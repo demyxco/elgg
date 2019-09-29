@@ -232,7 +232,6 @@ COPY php.ini /etc/php7/php.ini
 COPY www.conf /etc/php7/php-fpm.d/www.conf
 COPY docker.conf /etc/php7/php-fpm.d/docker.conf
 COPY s6-overlay/00-init /etc/cont-init.d/00-init
-COPY s6-overlay/00-www-data /etc/fix-attrs.d/00-www-data
 COPY s6-overlay/run-php-fpm /etc/services.d/php-fpm/run
 COPY s6-overlay/run-nginx /etc/services.d/nginx/run
 
