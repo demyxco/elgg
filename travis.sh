@@ -11,15 +11,11 @@ DEMYX_NGINX_VERSION=$(docker exec -t elgg nginx -V | grep 'nginx version' | cut 
 DEMYX_PHP_VERSION=$(docker exec -t elgg php -v | grep cli | awk -F '[ ]' '{print $2}' | sed -e 's/\r//g')
 DEMYX_ELGG_VERSION=$(docker exec -t elgg sh -c "cat vendor/elgg/elgg/composer.json" | jq -r '.version' | sed -e 's/\r//g')
 
-# Replace the README.md
-[[ -f README.md ]] && rm README.md
-cp .readme README.md
-
-# Replace latest with actual versions
-sed -i "s/alpine-latest-informational/alpine-${DEMYX_ALPINE_VERSION}-informational/g" README.md
-sed -i "s/nginx-latest-informational/nginx-${DEMYX_NGINX_VERSION}-informational/g" README.md
-sed -i "s/php-latest-informational/php-${DEMYX_PHP_VERSION}-informational/g" README.md
-sed -i "s/elgg-latest-informational/elgg-${DEMYX_ELGG_VERSION}-informational/g" README.md
+# Replace versions
+sed -i "s|alpine-.*.-informational|alpine-${DEMYX_ALPINE_VERSION}-informational|g" README.md
+sed -i "s|nginx-.*.-informational|nginx-${DEMYX_NGINX_VERSION}-informational|g" README.md
+sed -i "s|php-.*.-informational|php-${DEMYX_PHP_VERSION}-informational|g" README.md
+sed -i "s|elgg-.*.-informational|elgg-${DEMYX_ELGG_VERSION}-informational|g" README.md
 
 # Push back to GitHub
 git config --global user.email "travis@travis-ci.org"
