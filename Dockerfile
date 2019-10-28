@@ -121,40 +121,40 @@ RUN set -ex \
 #
 RUN set -ex; \
     apk add --no-cache --virtual .build-deps \
-	gcc \
-	libc-dev \
-	make \
-	openssl-dev \
-	pcre-dev \
-	zlib-dev \
-	linux-headers \
-	gnupg1 \
-	libxslt-dev \
-	gd-dev \
-	geoip-dev \
+    gcc \
+    libc-dev \
+    make \
+    openssl-dev \
+    pcre-dev \
+    zlib-dev \
+    linux-headers \
+    gnupg1 \
+    libxslt-dev \
+    gd-dev \
+    geoip-dev \
     git \
-	\
+    \
     && export NGINX_VERSION="$(wget -qO- https://raw.githubusercontent.com/nginxinc/docker-nginx/master/mainline/alpine/Dockerfile | grep 'ENV NGINX_VERSION' | cut -c 19-)" \
-	&& mkdir -p /usr/src \
+    && mkdir -p /usr/src \
     && git clone https://github.com/FRiCKLE/ngx_cache_purge.git /usr/src/ngx_cache_purge \
     && git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module \
     && wget https://nginx.org/download/nginx-"$NGINX_VERSION".tar.gz -qO /usr/src/nginx.tar.gz \
-	&& tar -xzf /usr/src/nginx.tar.gz -C /usr/src \
-	&& rm /usr/src/nginx.tar.gz \
-	&& sed -i "s/HTTP_MODULES/#HTTP_MODULES/g" /usr/src/ngx_cache_purge/config \
-	&& sed -i "s/NGX_ADDON_SRCS/#NGX_ADDON_SRCS/g" /usr/src/ngx_cache_purge/config \
-	&& sed -i "s|ngx_addon_name=ngx_http_cache_purge_module|ngx_addon_name=ngx_http_cache_purge_module; if test -n \"\$ngx_module_link\"; then ngx_module_type=HTTP; ngx_module_name=ngx_http_cache_purge_module; ngx_module_srcs=\"\$ngx_addon_dir/ngx_cache_purge_module.c\"; . auto/module; else HTTP_MODULES=\"\$HTTP_MODULES ngx_http_cache_purge_module\"; NGX_ADDON_SRCS=\"\$NGX_ADDON_SRCS \$ngx_addon_dir/ngx_cache_purge_module.c\"; fi|g" /usr/src/ngx_cache_purge/config \
-	&& sed -i "s|ngx_addon_name=ngx_http_headers_more_filter_module|ngx_addon_name=ngx_http_headers_more_filter_module; if test -n \"\$ngx_module_link\"; then ngx_module_type=HTTP; ngx_module_name=ngx_http_headers_more_filter_module; ngx_module_srcs=\"\$ngx_addon_dir/ngx_http_headers_more_filter_module.c\"; . auto/module; else HTTP_MODULES=\"\$HTTP_MODULES ngx_http_headers_more_filter_module\"; NGX_ADDON_SRCS=\"\$NGX_ADDON_SRCS \$ngx_addon_dir/ngx_http_headers_more_filter_module.c\"; fi|g" /usr/src/headers-more-nginx-module/config \
-	&& cd /usr/src/nginx-"$NGINX_VERSION" \
-	&& ./configure --with-compat --add-dynamic-module=/usr/src/ngx_cache_purge \
-	&& make modules \
-	&& cp objs/ngx_http_cache_purge_module.so /etc/nginx/modules \
-	&& make clean \
-	&& ./configure --with-compat --add-dynamic-module=/usr/src/headers-more-nginx-module \
-	&& make modules \
-	&& cp objs/ngx_http_headers_more_filter_module.so /etc/nginx/modules \
-	&& rm -rf /usr/src/nginx-"$NGINX_VERSION" /usr/src/ngx_cache_purge /usr/src/headers-more-nginx-module \
-	&& apk del .build-deps \
+    && tar -xzf /usr/src/nginx.tar.gz -C /usr/src \
+    && rm /usr/src/nginx.tar.gz \
+    && sed -i "s/HTTP_MODULES/#HTTP_MODULES/g" /usr/src/ngx_cache_purge/config \
+    && sed -i "s/NGX_ADDON_SRCS/#NGX_ADDON_SRCS/g" /usr/src/ngx_cache_purge/config \
+    && sed -i "s|ngx_addon_name=ngx_http_cache_purge_module|ngx_addon_name=ngx_http_cache_purge_module; if test -n \"\$ngx_module_link\"; then ngx_module_type=HTTP; ngx_module_name=ngx_http_cache_purge_module; ngx_module_srcs=\"\$ngx_addon_dir/ngx_cache_purge_module.c\"; . auto/module; else HTTP_MODULES=\"\$HTTP_MODULES ngx_http_cache_purge_module\"; NGX_ADDON_SRCS=\"\$NGX_ADDON_SRCS \$ngx_addon_dir/ngx_cache_purge_module.c\"; fi|g" /usr/src/ngx_cache_purge/config \
+    && sed -i "s|ngx_addon_name=ngx_http_headers_more_filter_module|ngx_addon_name=ngx_http_headers_more_filter_module; if test -n \"\$ngx_module_link\"; then ngx_module_type=HTTP; ngx_module_name=ngx_http_headers_more_filter_module; ngx_module_srcs=\"\$ngx_addon_dir/ngx_http_headers_more_filter_module.c\"; . auto/module; else HTTP_MODULES=\"\$HTTP_MODULES ngx_http_headers_more_filter_module\"; NGX_ADDON_SRCS=\"\$NGX_ADDON_SRCS \$ngx_addon_dir/ngx_http_headers_more_filter_module.c\"; fi|g" /usr/src/headers-more-nginx-module/config \
+    && cd /usr/src/nginx-"$NGINX_VERSION" \
+    && ./configure --with-compat --add-dynamic-module=/usr/src/ngx_cache_purge \
+    && make modules \
+    && cp objs/ngx_http_cache_purge_module.so /etc/nginx/modules \
+    && make clean \
+    && ./configure --with-compat --add-dynamic-module=/usr/src/headers-more-nginx-module \
+    && make modules \
+    && cp objs/ngx_http_headers_more_filter_module.so /etc/nginx/modules \
+    && rm -rf /usr/src/nginx-"$NGINX_VERSION" /usr/src/ngx_cache_purge /usr/src/headers-more-nginx-module \
+    && apk del .build-deps \
     && rm -rf /var/cache/apk/*
 #    
 # END BUILD CUSTOM MODULES
@@ -165,46 +165,46 @@ RUN set -ex; \
     apk add --no-cache php7 libsodium \
     php7-bcmath \
     php7-ctype \
-	php7-curl \
-	php7-dom \
-	php7-exif \
+    php7-curl \
+    php7-dom \
+    php7-exif \
     php7-fileinfo \
     php7-fpm \
-	php7-ftp \
-	php7-gd \
-	php7-iconv \
-	php7-imagick \
-	php7-json \
-	php7-mbstring \
-	php7-mysqli \
+    php7-ftp \
+    php7-gd \
+    php7-iconv \
+    php7-imagick \
+    php7-json \
+    php7-mbstring \
+    php7-mysqli \
     php7-opcache \
-	php7-openssl \
-	php7-pdo \
-	php7-pdo_mysql \
+    php7-openssl \
+    php7-pdo \
+    php7-pdo_mysql \
     php7-pecl-ssh2 \
     php7-phar \
-	php7-posix \
+    php7-posix \
     php7-session \
-	php7-simplexml \
+    php7-simplexml \
     php7-soap \
     php7-sodium \
-	php7-sockets \
-	php7-tokenizer \
-	php7-xml \
-	php7-xmlreader \
+    php7-sockets \
+    php7-tokenizer \
+    php7-xml \
+    php7-xmlreader \
     php7-xmlwriter \
     php7-zip \
-	php7-zlib
+    php7-zlib
 
 RUN set -ex; \
-	apk add --no-cache ed bash ; \
+    apk add --no-cache ed bash ; \
     ln -s /usr/sbin/php-fpm7 /usr/local/bin/php-fpm; \
     mkdir -p /var/log/demyx; \
     mkdir -p /var/www/html; \
     mkdir -p /var/www/data
 
 RUN set -ex; \
-	apk add --no-cache --virtual .elgg-deps composer git; \
+    apk add --no-cache --virtual .elgg-deps composer git; \
     chown -R www-data:www-data /usr/src; \
     su -c 'composer config -g repo.packagist composer https://packagist.org; \
         composer config -g github-protocols https ssh; \
@@ -215,7 +215,7 @@ RUN set -ex; \
     chown -R root:root /usr/src; \
     git clone https://github.com/Elgg/Elgg.git /usr/src/git; \
     cd /usr/src/git && composer install; \
-	apk del .elgg-deps && rm -rf /var/cache/apk/*
+    apk del .elgg-deps && rm -rf /var/cache/apk/*
 
 # s6-overlay
 RUN set -ex; \
