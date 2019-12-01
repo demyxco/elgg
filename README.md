@@ -5,7 +5,7 @@
 [![Alpine](https://img.shields.io/badge/alpine-3.10.3-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
 [![NGINX](https://img.shields.io/badge/nginx-1.17.6-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
 [![PHP](https://img.shields.io/badge/php-7.3.11-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
-[![Elgg](https://img.shields.io/badge/elgg-3.2.0-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
+[![Elgg](https://img.shields.io/badge/elgg-3.2.1-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/elgg)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
 
 Elgg is an award-winning open source social networking engine that provides a robust framework on which to build all kinds of social environments, from a campus wide social network for your university, school or college or an internal collaborative platform for your organization through to a brand-building communications tool for your company and its clients. 
