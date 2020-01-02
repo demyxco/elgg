@@ -113,8 +113,6 @@ services:
     volumes:
       - elgg:/demyx
       - demyx_log:/var/log/demyx
-    depends_on:
-      - elgg_db
     environment:
       - ELGG_DBHOST=elgg_db
       - ELGG_DBNAME=demyx
