@@ -16,7 +16,7 @@ script:
   - docker build -t demyx/"$DEMYX_REPOSITORY" .
   - docker-compose up -d
   - sleep 30
-  - docker exec -t elgg sh -c "php vendor/bin/elgg-cli plugins:list --status all"
+  - docker exec -t demyx_elgg sh -c "php vendor/bin/elgg-cli plugins:list --status all"
 
 after_success:
   - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin

@@ -6,10 +6,10 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Get versions
-DEMYX_ALPINE_VERSION=$(docker exec -t elgg cat /etc/os-release | grep VERSION_ID | cut -c 12- | sed -e 's/\r//g')
-DEMYX_NGINX_VERSION=$(docker exec -t elgg nginx -V | grep 'nginx version' | cut -c 22- | sed -e 's/\r//g')
-DEMYX_PHP_VERSION=$(docker exec -t elgg php -v | grep cli | awk -F '[ ]' '{print $2}' | sed -e 's/\r//g')
-DEMYX_ELGG_VERSION=$(docker exec -t elgg sh -c "cat vendor/elgg/elgg/composer.json" | jq -r '.version' | sed -e 's/\r//g')
+DEMYX_ALPINE_VERSION=$(docker exec -t demyx_elgg cat /etc/os-release | grep VERSION_ID | cut -c 12- | sed -e 's/\r//g')
+DEMYX_NGINX_VERSION=$(docker exec -t demyx_elgg nginx -V | grep 'nginx version' | cut -c 22- | sed -e 's/\r//g')
+DEMYX_PHP_VERSION=$(docker exec -t demyx_elgg php -v | grep cli | awk -F '[ ]' '{print $2}' | sed -e 's/\r//g')
+DEMYX_ELGG_VERSION=$(docker exec -t demyx_elgg sh -c "cat vendor/elgg/elgg/composer.json" | jq -r '.version' | sed -e 's/\r//g')
 
 # Replace versions
 sed -i "s|alpine-.*.-informational|alpine-${DEMYX_ALPINE_VERSION}-informational|g" README.md
