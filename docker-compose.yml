@@ -139,7 +139,7 @@ services:
       - ELGG_PHP_PM_MAX_REQUESTS=500
       - ELGG_PHP_MAX_EXECUTION_TIME=300
       - ELGG_PHP_MEMORY=256M
-      - TZ America/Los_Angeles
+      - TZ=America/Los_Angeles
     labels:
       # Elgg - https://domain.tld/
       - "traefik.enable=true"
