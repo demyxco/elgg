@@ -1,5 +1,0 @@
-#!/usr/bin/with-contenv bash
-# Demyx
-# https://demyx.sh
-
-nginx -g "daemon off;"

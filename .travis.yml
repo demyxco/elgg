@@ -10,24 +10,12 @@ services:
   - docker
 
 env:
-  - DOCKER_COMPOSE_VERSION=1.24.1 DEMYX_USERNAME=demyx DEMYX_REPOSITORY=elgg
-
-before_install:
-  - sudo apt-get install jq
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - docker pull alpine
-  - docker pull demyx/mariadb
-  - docker pull traefik
+  - DEMYX_USERNAME=demyx DEMYX_REPOSITORY=elgg
 
 script:
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" .
-  - docker-compose up -d elgg_db
-  - sleep 5
+  - docker build -t demyx/"$DEMYX_REPOSITORY" .
   - docker-compose up -d
-  - sleep 20
+  - sleep 30
   - docker exec -t elgg sh -c "php vendor/bin/elgg-cli plugins:list --status all"
 
 after_success:

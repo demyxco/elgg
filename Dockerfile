@@ -1,4 +1,4 @@
-FROM alpine
+FROM nginx:alpine
 
 LABEL sh.demyx.image demyx/elgg
 LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
@@ -6,115 +6,39 @@ LABEL sh.demyx.url https://demyx.sh
 LABEL sh.demyx.github https://github.com/demyxco
 LABEL sh.demyx.registry https://hub.docker.com/u/demyx
 
+# Set default variables
+ENV ELGG_ROOT=/demyx
+ENV ELGG_CONFIG=/etc/demyx
+ENV ELGG_LOG=/var/log/demyx
+ENV ELGG_DOMAIN=domain.tld
+ENV ELGG_SITENAME=demyx
+ENV ELGG_HTTPS=false
+ENV ELGG_WWWROOT=http://"$ELGG_DOMAIN"/
+ENV ELGG_DISPLAYNAME=demyx
+ENV ELGG_SITEEMAIL=info@"$ELGG_DOMAIN"
+ENV ELGG_USERNAME=demyx
+ENV ELGG_PASSWORD=demyxdemyx
+ENV ELGG_UPLOAD_LIMIT=128M
+ENV ELGG_PHP_OPCACHE=true
+ENV ELGG_PHP_PM=ondemand
+ENV ELGG_PHP_PM_MAX_CHILDREN=100
+ENV ELGG_PHP_PM_START_SERVERS=10
+ENV ELGG_PHP_PM_MIN_SPARE_SERVERS=5
+ENV ELGG_PHP_PM_MAX_SPARE_SERVERS=25
+ENV ELGG_PHP_PM_PROCESS_IDLE_TIMEOUT=5s
+ENV ELGG_PHP_PM_MAX_REQUESTS=500
+ENV ELGG_PHP_MAX_EXECUTION_TIME=300
+ENV ELGG_PHP_MEMORY=256M
 ENV TZ America/Los_Angeles
 
-RUN set -ex \
-# create nginx user/group first, to be consistent throughout docker variants
-    && export NGINX_MAINLINE_DOCKERFILE="$(wget -qO- https://raw.githubusercontent.com/nginxinc/docker-nginx/master/mainline/alpine/Dockerfile)" \
-    && export NGINX_VERSION="$(echo "$NGINX_MAINLINE_DOCKERFILE" | grep 'ENV NGINX_VERSION' | cut -c 19-)" \
-    && export NJS_VERSION="$(echo "$NGINX_MAINLINE_DOCKERFILE" | grep 'ENV NJS_VERSION' | cut -c 19-)" \
-    && export PKG_RELEASE="$(echo "$NGINX_MAINLINE_DOCKERFILE" | grep 'ENV PKG_RELEASE' | cut -c 19-)" \
-    && addgroup -g 101 -S nginx \
-    && adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx \
-    && apkArch="$(cat /etc/apk/arch)" \
-    && nginxPackages=" \
-        nginx=${NGINX_VERSION}-r${PKG_RELEASE} \
-        nginx-module-xslt=${NGINX_VERSION}-r${PKG_RELEASE} \
-        nginx-module-geoip=${NGINX_VERSION}-r${PKG_RELEASE} \
-        nginx-module-image-filter=${NGINX_VERSION}-r${PKG_RELEASE} \
-        nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${PKG_RELEASE} \
-    " \
-    && case "$apkArch" in \
-        x86_64) \
-# arches officially built by upstream
-            set -x \
-            && KEY_SHA512="e7fa8303923d9b95db37a77ad46c68fd4755ff935d0a534d26eba83de193c76166c68bfe7f65471bf8881004ef4aa6df3e34689c305662750c0172fca5d8552a *stdin" \
-            && apk add --no-cache --virtual .cert-deps \
-                openssl curl ca-certificates \
-            && curl -o /tmp/nginx_signing.rsa.pub https://nginx.org/keys/nginx_signing.rsa.pub \
-            && if [ "$(openssl rsa -pubin -in /tmp/nginx_signing.rsa.pub -text -noout | openssl sha512 -r)" = "$KEY_SHA512" ]; then \
-                 echo "key verification succeeded!"; \
-                 mv /tmp/nginx_signing.rsa.pub /etc/apk/keys/; \
-               else \
-                 echo "key verification failed!"; \
-                 exit 1; \
-               fi \
-            && printf "%s%s%s\n" \
-                "https://nginx.org/packages/mainline/alpine/v" \
-                `egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release` \
-                "/main" \
-            | tee -a /etc/apk/repositories \
-            && apk del .cert-deps \
-            ;; \
-        *) \
-# we're on an architecture upstream doesn't officially build for
-# let's build binaries from the published packaging sources
-            set -x \
-            && tempDir="$(mktemp -d)" \
-            && chown nobody:nobody $tempDir \
-            && apk add --no-cache --virtual .build-deps \
-                gcc \
-                libc-dev \
-                make \
-                openssl-dev \
-                pcre-dev \
-                zlib-dev \
-                linux-headers \
-                libxslt-dev \
-                gd-dev \
-                geoip-dev \
-                perl-dev \
-                libedit-dev \
-                mercurial \
-                bash \
-                alpine-sdk \
-                findutils \
-            && su - nobody -s /bin/sh -c " \
-                export HOME=${tempDir} \
-                && cd ${tempDir} \
-                && hg clone https://hg.nginx.org/pkg-oss \
-                && cd pkg-oss \
-                && hg up ${NGINX_VERSION}-${PKG_RELEASE} \
-                && cd alpine \
-                && make all \
-                && apk index -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk \
-                && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz \
-                " \
-            && echo "${tempDir}/packages/alpine/" >> /etc/apk/repositories \
-            && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/ \
-            && apk del .build-deps \
-            ;; \
-    esac \
-    && apk add --no-cache $nginxPackages \
-# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
-    && if [ -n "$tempDir" ]; then rm -rf "$tempDir"; fi \
-    && if [ -n "/etc/apk/keys/abuild-key.rsa.pub" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi \
-    && if [ -n "/etc/apk/keys/nginx_signing.rsa.pub" ]; then rm -f /etc/apk/keys/nginx_signing.rsa.pub; fi \
-# remove the last line with the packages repos in the repositories file
-    && sed -i '$ d' /etc/apk/repositories \
-# Bring in gettext so we can get `envsubst`, then throw
-# the rest away. To do this, we need to install `gettext`
-# then move `envsubst` out of the way so `gettext` can
-# be deleted completely, then move `envsubst` back.
-    && apk add --no-cache --virtual .gettext gettext \
-    && mv /usr/bin/envsubst /tmp/ \
+# Configure Demyx
+RUN set -ex; \
+    addgroup -g 1000 -S demyx; \
+    adduser -u 1000 -D -S -G demyx demyx; \
     \
-    && runDeps="$( \
-        scanelf --needed --nobanner /tmp/envsubst \
-            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-            | sort -u \
-            | xargs -r apk info --installed \
-            | sort -u \
-    )" \
-    && apk add --no-cache $runDeps \
-    && apk del .gettext \
-    && mv /tmp/envsubst /usr/local/bin/ \
-# Bring in tzdata so users could set the timezones through the environment
-# variables
-    && apk add --no-cache tzdata \
-# forward request and error logs to docker log collector
-    && ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+    install -d -m 0755 -o demyx -g demyx "$ELGG_ROOT"; \
+    install -d -m 0755 -o demyx -g demyx "$ELGG_CONFIG"; \
+    install -d -m 0755 -o demyx -g demyx "$ELGG_LOG"
 
 #    
 # BUILD CUSTOM MODULES
@@ -160,9 +84,10 @@ RUN set -ex; \
 # END BUILD CUSTOM MODULES
 #
 
+# Install php and friends
 RUN set -ex; \
-    adduser -u 82 -D -S -G  www-data www-data; \
-    apk add --no-cache php7 libsodium \
+    apk add --no-cache bash curl dumb-init git libsodium sudo \
+    php7 \
     php7-bcmath \
     php7-ctype \
     php7-curl \
@@ -194,49 +119,65 @@ RUN set -ex; \
     php7-xmlreader \
     php7-xmlwriter \
     php7-zip \
-    php7-zlib
+    php7-zlib; \
+    \
+    ln -s /usr/sbin/php-fpm7 /usr/local/bin/php-fpm
 
+# Setup sudo
 RUN set -ex; \
-    apk add --no-cache ed bash ; \
-    ln -s /usr/sbin/php-fpm7 /usr/local/bin/php-fpm; \
-    mkdir -p /var/log/demyx; \
-    mkdir -p /var/www/html; \
-    mkdir -p /var/www/data
+    echo "demyx ALL=(ALL) NOPASSWD:/usr/sbin/nginx" > /etc/sudoers.d/demyx; \
+    echo 'Defaults env_keep +="ELGG_DOMAIN"' >> /etc/sudoers.d/demyx; \
+    echo 'Defaults env_keep +="ELGG_CONFIG"' >> /etc/sudoers.d/demyx; \
+    echo 'Defaults env_keep +="ELGG_UPLOAD_LIMIT"' >> /etc/sudoers.d/demyx; \
+    echo 'Defaults env_keep +="ELGG_ROOT"' >> /etc/sudoers.d/demyx
 
+# Elgg
 RUN set -ex; \
-    apk add --no-cache --virtual .elgg-deps composer git; \
-    chown -R www-data:www-data /usr/src; \
-    su -c 'composer config -g repo.packagist composer https://packagist.org; \
-        composer config -g github-protocols https ssh; \
-        composer create-project elgg/starter-project:dev-master ./usr/src/elgg; \
-        cd /usr/src/elgg; \
-        composer install; \
-        composer install' -s /bin/sh www-data; \
-    chown -R root:root /usr/src; \
-    git clone https://github.com/Elgg/Elgg.git /usr/src/git; \
-    cd /usr/src/git && composer install; \
-    apk del .elgg-deps && rm -rf /var/cache/apk/*
-
-# s6-overlay
-RUN set -ex; \
-    apk add --no-cache --virtual .elgg-deps curl; \
-    export DEMYX_S6_VERSION=$(curl -sL https://api.github.com/repos/just-containers/s6-overlay/releases/latest | grep '"name"' | head -n1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
-    wget https://github.com/just-containers/s6-overlay/releases/download/${DEMYX_S6_VERSION}/s6-overlay-amd64.tar.gz -qO /tmp/s6-overlay-amd64.tar.gz; \
-    tar xzf /tmp/s6-overlay-amd64.tar.gz -C /; \
+    # Composer
+    wget https://getcomposer.org/installer -qO /tmp/composer-setup.php; \
+    php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer; \
     rm -rf /tmp/*; \
-    apk del .elgg-deps && rm -rf /var/cache/apk/*; \
-    chown -R www-data:www-data /var/www
+    \
+    su -c 'composer create-project elgg/starter-project:dev-master $ELGG_CONFIG/elgg; \
+        cd "$ELGG_CONFIG"/elgg; \
+        composer install; \
+        composer install; \
+        \
+        git clone https://github.com/Elgg/Elgg.git ${ELGG_CONFIG}/elgg-git; \
+        cd ${ELGG_CONFIG}/elgg-git; \
+        composer install; \
+        \
+        composer clearcache' -s /bin/sh demyx; \
+    \
+    rm -rf /var/cache/apk/*
 
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY php.ini /etc/php7/php.ini
-COPY www.conf /etc/php7/php-fpm.d/www.conf
-COPY docker.conf /etc/php7/php-fpm.d/docker.conf
-COPY s6-overlay/00-init /etc/cont-init.d/00-init
-COPY s6-overlay/run-php-fpm /etc/services.d/php-fpm/run
-COPY s6-overlay/run-nginx /etc/services.d/nginx/run
+# Copy files
+COPY --chown=demyx:demyx src "$ELGG_CONFIG"
+
+# Finalize
+RUN set -ex; \
+    # Symlink php configs
+    ln -sf "$ELGG_CONFIG"/php/php.ini /etc/php7/php.ini; \
+    ln -sf "$ELGG_CONFIG"/php/www.conf /etc/php7/php-fpm.d/www.conf; \
+    ln -s "$ELGG_CONFIG"/php/docker.conf /etc/php7/php-fpm.d/docker.conf; \
+    \
+    # Migrate scripts
+    mv "$ELGG_CONFIG"/config.sh /usr/local/bin/demyx-config; \
+    mv "$ELGG_CONFIG"/entrypoint.sh /usr/local/bin/demyx; \
+    mv "$ELGG_CONFIG"/install.sh /usr/local/bin/demyx-install; \
+    \
+    # Make scripts executable
+    chmod +x /usr/local/bin/demyx-config; \
+    chmod +x /usr/local/bin/demyx; \
+    chmod +x /usr/local/bin/demyx-install; \
+    \
+    # Lock down scripts
+    chown -R root:root /usr/local/bin/*
 
 EXPOSE 80 9000
 
-WORKDIR /var/www/html
+WORKDIR "$ELGG_ROOT"
 
-ENTRYPOINT ["/init"]
+USER demyx
+
+ENTRYPOINT ["dumb-init", "demyx"]
