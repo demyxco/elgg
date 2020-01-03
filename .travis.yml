@@ -14,7 +14,9 @@ env:
 
 script:
   - docker build -t demyx/"$DEMYX_REPOSITORY" .
-  - docker-compose up -d
+  - docker-compose up -d demyx_db
+  - sleep 5
+  - docker-compose up -d demyx_elgg
   - sleep 30
   - docker exec -t demyx_elgg sh -c "php vendor/bin/elgg-cli plugins:list --status all"
 
