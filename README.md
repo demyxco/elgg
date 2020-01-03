@@ -87,8 +87,8 @@ services:
       - "traefik.http.routers.traefik-https.tls.certresolver=demyx"
       - "traefik.http.routers.traefik-https.middlewares=traefik-https-auth"
       - "traefik.http.middlewares.traefik-https-auth.basicauth.users=demyx:$$apr1$$EqJj89Yw$$WLsBIjCILtBGjHppQ76YT1" # Password: demyx
-  elgg_db:
-    container_name: elgg_db
+  demyx_db:
+    container_name: demyx_db
     image: demyx/mariadb
     restart: unless-stopped
     depends_on: 
@@ -96,7 +96,7 @@ services:
     networks:
       - demyx
     volumes:
-      - elgg_db:/demyx
+      - demyx_db:/demyx
       - demyx_log:/var/log/demyx
     environment:
       - MARIADB_DATABASE=demyx
@@ -129,8 +129,8 @@ services:
       - MARIADB_TABLE_OPEN_CACHE=64
       - MARIADB_WRITE_BUFFER=2M
       - TZ=America/Los_Angeles
-  elgg:
-    container_name: elgg
+  demyx_elgg:
+    container_name: demyx_elgg
     image: demyx/elgg
     restart: unless-stopped
     depends_on: 
@@ -138,12 +138,10 @@ services:
     networks:
       - demyx
     volumes:
-      - elgg:/demyx
+      - demyx_elgg:/demyx
       - demyx_log:/var/log/demyx
-    depends_on:
-      - elgg_db
     environment:
-      - ELGG_DBHOST=elgg_db
+      - ELGG_DBHOST=demyx_db
       - ELGG_DBNAME=demyx
       - ELGG_DBUSER=demyx
       - ELGG_DBPASSWORD=demyx
@@ -166,7 +164,7 @@ services:
       - ELGG_PHP_PM_MAX_REQUESTS=500
       - ELGG_PHP_MAX_EXECUTION_TIME=300
       - ELGG_PHP_MEMORY=256M
-      - TZ America/Los_Angeles
+      - TZ=America/Los_Angeles
     labels:
       # Elgg - https://domain.tld/
       - "traefik.enable=true"
@@ -187,10 +185,10 @@ services:
       - "traefik.http.routers.elgg-https.service=elgg-https-port"
       - "traefik.http.services.elgg-https-port.loadbalancer.server.port=80"
 volumes:
-  elgg:
-    name: elgg
-  elgg_db:
-    name: elgg_db
+  demyx_elgg:
+    name: demyx_elgg
+  demyx_db:
+    name: demyx_db
   demyx_traefik:
     name: demyx_traefik
   demyx_log:
