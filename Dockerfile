@@ -156,6 +156,8 @@ COPY --chown=demyx:demyx src "$ELGG_CONFIG"
 
 # Finalize
 RUN set -ex; \
+    # Create php directory
+    install -d -m 0755 -o demyx -g demyx "$ELGG_CONFIG"/php; \
     # Symlink php configs
     ln -sf "$ELGG_CONFIG"/php/php.ini /etc/php7/php.ini; \
     ln -sf "$ELGG_CONFIG"/php/www.conf /etc/php7/php-fpm.d/www.conf; \
